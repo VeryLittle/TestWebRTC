@@ -9,6 +9,7 @@
       this.signalChanel = signalChanel;
       this.peerConnection = new RTCPeerConnection();
       this.peerConnection.addEventListener('track', (e) => {
+        console.log(e);
         this.onTrack && this.onTrack(e);
       });
       this.addTracks(tracks);
