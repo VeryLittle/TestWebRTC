@@ -9,6 +9,7 @@
       this.signalChanel = signalChanel;
       this.peerConnection = new RTCPeerConnection();
       this.peerConnection.addEventListener('track', (e) => {
+        console.log('Track', ev);
         this.onTrack && this.onTrack(e);
       });
       this.addTracks(tracks);
@@ -38,34 +39,34 @@
       }
 
       this.peerConnection.ondatachannel = ev => {
-        console.log('ondatachannel', ev);
+        console.log('Data Channel', ev);
       }
 
       this.peerConnection.onicecandidate = event => {
-        console.log('onicecandidate', event);
+        console.log('Ice Candidate', event);
         if (event.candidate) {
-          console.log('onicecandidate', event.candidate);
+          console.log('Ice Candidate', event.candidate);
         }
       };
 
       this.peerConnection.addEventListener("icecandidateerror", (event) => {
-        console.log('icecandidateerror', event)
+        console.log('Icecandidateerror', event)
       });
 
       this.peerConnection.oniceconnectionstatechange = ev => {
-        console.log('oniceconnectionstatechange', ev);
+        console.log('Ice Connection State Change', ev);
       }
 
       this.peerConnection.onicegatheringstatechange = ev => {
-        console.log('onicegatheringstatechange', ev);
+        console.log('Ice Gathering State Change', ev);
       }
 
       this.peerConnection.onnegotiationneeded = ev => {
-        console.log('onnegotiationneeded', ev);
+        console.log('Negotiation Needed', ev);
       };
 
       this.peerConnection.onsignalingstatechange = ev => {
-        console.log('onsignalingstatechange', ev);
+        console.log('Signaling State Change', ev);
       };
     }
 
