@@ -12,6 +12,61 @@
         this.onTrack && this.onTrack(e);
       });
       this.addTracks(tracks);
+
+      this.peerConnection.onconnectionstatechange = (ev) => {
+        switch(this.peerConnection) {
+          case "new":
+          case "checking":
+            console.log("Connecting...");
+            break;
+          case "connected":
+            console.log("Online");
+            break;
+          case "disconnected":
+            console.log("Disconnecting...");
+            break;
+          case "closed":
+            console.log("Offline");
+            break;
+          case "failed":
+            console.log("Error");
+            break;
+          default:
+            console.log("Unknown");
+            break;
+        }
+      }
+
+      this.peerConnection.ondatachannel = ev => {
+        console.log('ondatachannel', ev);
+      }
+
+      this.peerConnection.onicecandidate = event => {
+        console.log('onicecandidate', event);
+        if (event.candidate) {
+          console.log('onicecandidate', event.candidate);
+        }
+      };
+
+      this.peerConnection.addEventListener("icecandidateerror", (event) => {
+        console.log('icecandidateerror', event)
+      });
+
+      this.peerConnection.oniceconnectionstatechange = ev => {
+        console.log('oniceconnectionstatechange', ev);
+      }
+
+      this.peerConnection.onicegatheringstatechange = ev => {
+        console.log('onicegatheringstatechange', ev);
+      }
+
+      this.peerConnection.onnegotiationneeded = ev => {
+        console.log('onnegotiationneeded', ev);
+      };
+
+      this.peerConnection.onsignalingstatechange = ev => {
+        console.log('onsignalingstatechange', ev);
+      };
     }
 
     addTracks(tracks) {
