@@ -2,8 +2,7 @@ const express = require('express')
 const app = express()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
-const { v4: uuidV4 } = require('uuid');
-const { ExpressPeerServer } = require('peer');
+const { v4: uuidV4 } = require('uuid')
 
 app.set('view engine', 'ejs')
 app.use(express.static('public'))
@@ -17,22 +16,22 @@ app.get('/:room', (req, res) => {
 })
 
 io.on('connection', socket => {
-  socket.on('join-room', (roomId, userId) => {
-    socket.join(roomId)
-    socket.to(roomId).broadcast.emit('user-connected', userId)
+  socket.on('join-room', (roomId) => {
+    socket.join(roomId);
+    socket.to(roomId).broadcast.emit('user-connected', socket.id);
 
     socket.on('disconnect', () => {
-      socket.to(roomId).broadcast.emit('user-disconnected', userId)
-    })
-  })
-})
+      socket.to(roomId).broadcast.emit('user-disconnected', socket.id);
+    });
 
-const peerServer = ExpressPeerServer(server, {
-  path: '/myapp'
+    socket.on('offer', (offer, userId) => {
+      io.to(userId).emit('offer', offer, socket.id);
+    });
+
+    socket.on('answer', (answer, userId) => {
+      io.to(userId).emit('answer', answer, socket.id);
+    });
+  });
 });
 
-app.use('/peerjs', peerServer);
-
 server.listen(3000)
-
-
