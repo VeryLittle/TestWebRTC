@@ -37,9 +37,9 @@
     }
   }
 
-  const addVideo = () => {
+  const addVideo = (stream, userId) => {
     const video = document.createElement("video");
-    video.id =
+    video.id = userId;
     video.srcObject = stream;
     video.addEventListener("loadedmetadata", () => {
       video.play();
@@ -112,7 +112,7 @@
   socket.on('offer', async (offer, user_id) => {
     const connector = getConnector(user_id);
     connector.onTrack = (e) => {
-      debugger
+      addVideo(e.streams[0], user_id);
     };
     addConnectorToList(connector);
     await connector.acceptConnect(offer);
