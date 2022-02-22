@@ -8,6 +8,9 @@
       this.userId = userId;
       this.signalChanel = signalChanel;
       this.peerConnection = new RTCPeerConnection();
+      this.peerConnection.addEventListener('track', (e) => {
+        this.onTrack && this.onTrack(e);
+      });
       this.addTracks(tracks);
     }
 
@@ -33,6 +36,16 @@
       await this.signalChanel.sendAnswer(answer);
     }
   }
+
+  const addVideo = () => {
+    const video = document.createElement("video");
+    video.id =
+    video.srcObject = stream;
+    video.addEventListener("loadedmetadata", () => {
+      video.play();
+      document.getElementById('video-grid').append(video);
+    });
+  };
 
   const updateConnectionsEl = () => {
     const connectionsEl = document.getElementById('connections');
@@ -83,6 +96,9 @@
 
   socket.on('user-connected', async (userId) => {
     const connector = getConnector(userId);
+    connector.onTrack((e) => {
+      debugger
+    });
     addConnectorToList(connector);
     await connector.connect();
   });
@@ -94,6 +110,9 @@
 
   socket.on('offer', async (offer, user_id) => {
     const connector = getConnector(user_id);
+    connector.onTrack((e) => {
+      debugger
+    });
     addConnectorToList(connector);
     await connector.acceptConnect(offer);
   });
