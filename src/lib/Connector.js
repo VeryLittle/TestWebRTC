@@ -28,7 +28,7 @@ export class Connector {
 
 	addStream(stream) {
 		if (this.peerConnection && stream) {
-			stream.getTracks().forEach(track => this.peerConnection.addTrack(track, stream));
+			this.peerConnection.addTrack(stream.getTracks()[0], stream);
 		}
 	}
 
