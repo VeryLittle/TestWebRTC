@@ -12,6 +12,11 @@ import {Connector} from "./lib/Connector";
 		});
 	};
 
+	const removeVideo = (userId) => {
+		const video = document.getElementById(userId);
+		if (video) video.remove();
+	};
+
 	const updateConnectionsEl = () => {
 		const connectionsEl = document.getElementById('connections');
 		connectionsEl.innerHTML = Object.keys(connectors).length;
@@ -29,7 +34,6 @@ import {Connector} from "./lib/Connector";
 		delete connectors[connector.userId];
 		updateConnectionsEl();
 	}
-
 
 	let video = true;
 
@@ -71,7 +75,7 @@ import {Connector} from "./lib/Connector";
 	socket.on('user-connected', async (userId) => {
 		const connector = getConnector(userId);
 		connector.onTrack = (e) => {
-			debugger
+			addVideo(e.streams[0], user_id);
 		};
 		addConnectorToList(connector);
 		await connector.connect();
@@ -80,12 +84,12 @@ import {Connector} from "./lib/Connector";
 	socket.on('user-disconnected', async (userId) => {
 		const connector = getConnector(userId);
 		removeConnectorFromList(connector);
+		removeVideo(userId);
 	});
 
 	socket.on('offer', async (offer, user_id) => {
 		const connector = getConnector(user_id);
 		connector.onTrack = (e) => {
-			debugger
 			addVideo(e.streams[0], user_id);
 		};
 		addConnectorToList(connector);

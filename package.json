@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js",
-    "build": "webpack"
+    "start-server": "node server.js",
+    "dev-server": "nodemon server.js",
+    "build-front": "webpack",
+    "dev-front": "webpack --watch"
   },
   "keywords": [],
   "author": "",
