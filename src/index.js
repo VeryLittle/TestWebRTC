@@ -84,7 +84,7 @@ import {Connector} from "./lib/Connector";
 	socket.on('user-connected', async (userId) => {
 		const connector = getConnector(userId);
 		connector.onTrack = (e) => {
-			addVideo(e.streams[0], user_id);
+			addVideo(e.streams[0], userId);
 		};
 		addConnectorToList(connector);
 		await connector.connect();
