@@ -7,10 +7,8 @@ import {Connector} from "./lib/Connector";
 		video.id = userId;
 		video.srcObject = stream;
 		video.muted = !!muted;
-		video.addEventListener("loadedmetadata", () => {
-			video.play();
-			document.getElementById('video-grid').append(video);
-		});
+		video.autoplay = true;
+		document.getElementById('video-grid').append(video);
 	};
 
 	const removeVideo = (userId) => {
