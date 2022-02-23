@@ -2,10 +2,11 @@ import {io} from 'socket.io-client';
 import {Connector} from "./lib/Connector";
 
 (async () => {
-	const addVideo = (stream, userId) => {
+	const addVideo = (stream, userId, muted) => {
 		const video = document.createElement("video");
 		video.id = userId;
 		video.srcObject = stream;
+		video.muted = !!muted;
 		video.addEventListener("loadedmetadata", () => {
 			video.play();
 			document.getElementById('video-grid').append(video);
@@ -56,7 +57,7 @@ import {Connector} from "./lib/Connector";
 		});
 
 	if (video) {
-		addVideo(stream, 'self');
+		addVideo(stream, 'self', true);
 	}
 
 	const getConnector = (user_id) => {
