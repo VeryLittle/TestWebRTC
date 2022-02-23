@@ -31,6 +31,10 @@ io.on('connection', socket => {
 		socket.on('answer', (answer, userId) => {
 			io.to(userId).emit('answer', answer, socket.id);
 		});
+
+		socket.on('candidate', (candidate, userId) => {
+			io.to(userId).emit('candidate', candidate, socket.id);
+		});
 	});
 });
 

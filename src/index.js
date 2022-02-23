@@ -3,6 +3,12 @@ import {Connector} from "./lib/Connector";
 
 (async () => {
 	const addVideo = (stream, userId, muted) => {
+		const v = document.getElementById(userId);
+		if (v) {
+			v.srcObject = stream;
+			return;
+		}
+
 		const video = document.createElement("video");
 		video.id = userId;
 		video.srcObject = stream;
@@ -74,8 +80,11 @@ import {Connector} from "./lib/Connector";
 					socket.on('answer', func);
 				});
 			},
-			sendAnswer: async (answer) => {
+			sendAnswer: (answer) => {
 				socket.emit('answer', answer, user_id);
+			},
+			sendCandidate: (candidate) => {
+				socket.emit('candidate', candidate, user_id);
 			},
 		};
 		return new Connector({signalChanel, stream, userId: user_id});
@@ -103,6 +112,11 @@ import {Connector} from "./lib/Connector";
 		};
 		addConnectorToList(connector);
 		await connector.acceptConnect(offer);
+	});
+
+	socket.on('candidate', async (candidate, user_id) => {
+		const connector = getConnector(user_id);
+		connector.addIceCandidate(candidate);
 	});
 
 	socket.emit('join-room', ROOM_ID);
