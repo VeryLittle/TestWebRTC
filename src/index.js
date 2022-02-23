@@ -49,7 +49,15 @@ import {Connector} from "./lib/Connector";
 		.catch(() => {
 			video = true;
 			return getMedia({video: true});
+		})
+		.catch(() => {
+			video = false;
+			return null;
 		});
+
+	if (video) {
+		addVideo(stream, 'self');
+	}
 
 	const getConnector = (user_id) => {
 		if (connectors[user_id]) return connectors[user_id];
