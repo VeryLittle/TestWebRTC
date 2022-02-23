@@ -22,9 +22,22 @@ export class Connector {
       {
         iceServers: [
           {
-            urls: "turns:158.101.203.180:3478",
-            username: "test",
-            credential: "test123"
+            urls: "stun:openrelay.metered.ca:80"
+          },
+          {
+            urls: "turn:openrelay.metered.ca:80",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          },
+          {
+            urls: "turn:openrelay.metered.ca:443",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          },
+          {
+            urls: "turn:openrelay.metered.ca:443?transport=tcp",
+            username: "openrelayproject",
+            credential: "openrelayproject"
           }
         ]
       }
