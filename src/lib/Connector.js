@@ -24,7 +24,7 @@ export class Connector {
           {
             urls: "turns:158.101.203.180:3478",
             username: "test",
-            credential: "test1234"
+            credential: "test123"
           }
         ]
       }
@@ -43,6 +43,14 @@ export class Connector {
       }
       this.signalChanel.sendCandidate(message);
       console.log(message);
+    };
+
+    this.peerConnection.onicecandidateerror = (e) => {
+      console.log('Ice Candidate Error', e);
+    };
+
+    this.peerConnection.onnegotiationneeded = (e) => {
+      console.log('Negotiation Needed', e);
     };
     this.addStream(stream);
   }
