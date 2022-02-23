@@ -18,9 +18,18 @@ export class Connector {
   constructor({stream, signalChanel, userId}) {
     this.userId = userId;
     this.signalChanel = signalChanel;
-    this.peerConnection = new RTCPeerConnection();
+    this.peerConnection = new RTCPeerConnection(
+      {
+        iceServers: [
+          {
+            urls: "turns:158.101.203.180:3478",
+            username: "test",
+            credential: "test123"
+          }
+        ]
+      }
+    );
     this.peerConnection.ontrack = (e) => {
-      console.log('Track', e);
       this.onTrack && this.onTrack(e);
     };
     this.peerConnection.onicecandidate = (e) => {
@@ -33,7 +42,6 @@ export class Connector {
         message.sdpMLineIndex = e.candidate.sdpMLineIndex;
       }
       this.signalChanel.sendCandidate(message);
-      console.log(message);
     };
     this.addStream(stream);
   }
