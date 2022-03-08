@@ -1,123 +1,46 @@
-import {io} from 'socket.io-client';
-import {Connector} from "./lib/Connector";
+import {createVideoRoomClient} from "./lib/VideoRoom";
 
-(async () => {
-	const addVideo = (stream, userId, muted) => {
-		const v = document.getElementById(userId);
-		if (v) {
-			v.srcObject = stream;
-			return;
-		}
+async function connect(server, roomId, displayName) {
+	const client = await createVideoRoomClient({debug: true});
+	const session = await client.createSession(server);
+	const room = await session.joinRoom(roomId);
 
-		const video = document.createElement("video");
-		video.id = userId;
-		video.srcObject = stream;
-		video.muted = !!muted;
-		document.getElementById('video-grid').append(video);
-		video.addEventListener("loadedmetadata", () => {
-			video.play();
-		});
-	};
+	const pub = await room.publish({publishOptions: {display: displayName}, mediaOptions: {media: {video: "lowres"}}});
+	const myVideo = makeDisplay(displayName);
+	pub.onTrackAdded(track => myVideo.stream.addTrack(track));
+	pub.onTrackRemoved(track => myVideo.stream.removeTrack(track));
 
-	const removeVideo = (userId) => {
-		const video = document.getElementById(userId);
-		if (video) video.remove();
-	};
+	const subs = {};
+	room.onPublisherAdded(publishers => publishers.forEach(subscribe));
+	room.onPublisherRemoved(unsubscribe);
 
-	const updateConnectionsEl = () => {
-		const connectionsEl = document.getElementById('connections');
-		connectionsEl.innerHTML = Object.keys(connectors).length;
+	return {session, room, publisher: pub, subscribers: subs};
+
+
+	async function subscribe(publisher) {
+		const sub = subs[publisher.id] = await room.subscribe([{feed: publisher.id}])
+		sub.video = makeDisplay(publisher.display)
+		sub.onTrackAdded(track => sub.video.stream.addTrack(track))
+		sub.onTrackRemoved(track => sub.video.stream.removeTrack(track))
 	}
 
-	const socket = io('/');
-	const connectors = {};
-	const addConnectorToList = (connector) => {
-		connectors[connector.userId] = connector;
-		updateConnectionsEl();
+	async function unsubscribe(publisherId) {
+		await subs[publisherId].unsubscribe()
+		subs[publisherId].video.remove()
 	}
-	window.connectors = connectors;
+}
 
-	const removeConnectorFromList = (connector) => {
-		delete connectors[connector.userId];
-		updateConnectionsEl();
+function makeDisplay(displayName) {
+	const stream = new MediaStream()
+	const $display = $("<div class='display'><div class='name'></div><video autoplay></video></div>").appendTo("#displays")
+	$display.find(".name").text(displayName)
+	Janus.attachMediaStream($display.find("video").get(0), stream)
+	return {
+		stream: stream,
+		remove: () => $display.remove()
 	}
+}
 
-	let video = true;
-
-	function getMedia(constraints) {
-		return navigator.mediaDevices.getUserMedia(constraints)
-	}
-
-	const stream = await getMedia({video: true, audio: true})
-		.catch(() => {
-			video = false;
-			return getMedia({audio: true});
-		})
-		.catch(() => {
-			video = true;
-			return getMedia({video: true});
-		})
-		.catch(() => {
-			video = false;
-			return null;
-		});
-
-	if (video) {
-		addVideo(stream, 'self', true);
-	}
-
-	const getConnector = (user_id) => {
-		if (connectors[user_id]) return connectors[user_id];
-		const signalChanel = {
-			sendOffer: async (offer) => {
-				socket.emit('offer', offer, user_id);
-				return new Promise((resolve) => {
-					const func = (answer, userId) => {
-						if (userId !== user_id) return;
-						socket.off('answer');
-						resolve(answer);
-					};
-					socket.on('answer', func);
-				});
-			},
-			sendAnswer: (answer) => {
-				socket.emit('answer', answer, user_id);
-			},
-			sendCandidate: (candidate) => {
-				socket.emit('candidate', candidate, user_id);
-			},
-		};
-		return new Connector({signalChanel, stream, userId: user_id});
-	};
-
-	socket.on('user-connected', async (userId) => {
-		const connector = getConnector(userId);
-		connector.onTrack = (e) => {
-			addVideo(e.streams[0], userId);
-		};
-		addConnectorToList(connector);
-		await connector.connect();
-	});
-
-	socket.on('user-disconnected', async (userId) => {
-		const connector = getConnector(userId);
-		removeConnectorFromList(connector);
-		removeVideo(userId);
-	});
-
-	socket.on('offer', async (offer, user_id) => {
-		const connector = getConnector(user_id);
-		connector.onTrack = (e) => {
-			addVideo(e.streams[0], user_id);
-		};
-		addConnectorToList(connector);
-		await connector.acceptConnect(offer);
-	});
-
-	socket.on('candidate', async (candidate, user_id) => {
-		const connector = getConnector(user_id);
-		connector.addIceCandidate(candidate);
-	});
-
-	socket.emit('join-room', ROOM_ID);
-})();
+connect('wss://farm.maindp.ru/ws', 1234, 'MyDisplayName')
+	.then(() => '')
+	.catch(console.error)
