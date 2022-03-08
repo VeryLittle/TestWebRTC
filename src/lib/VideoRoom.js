@@ -107,6 +107,7 @@ export function attachToPlugin(session, plugin) {
 				else eventTarget.dispatchEvent(new CustomEvent("message", {detail: {message: message, jsep: jsep}}))
 			},
 			onlocaltrack: function(track, added) {
+				console.log('LOG: onlocaltrack', track, added);
 				eventTarget.dispatchEvent(new CustomEvent("localtrack", {detail: {track: track, added: added}}))
 			},
 			onremotetrack: function(track, mid, added) {
