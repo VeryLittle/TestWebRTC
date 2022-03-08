@@ -1,3 +1,4 @@
+import Janus from "janus-gateway-ts";
 import {createVideoRoomClient} from "./lib/VideoRoom";
 
 async function connect(server, roomId, displayName) {
@@ -32,12 +33,14 @@ async function connect(server, roomId, displayName) {
 
 function makeDisplay(displayName) {
 	const stream = new MediaStream()
-	const $display = $("<div class='display'><div class='name'></div><video autoplay></video></div>").appendTo("#displays")
-	$display.find(".name").text(displayName)
-	Janus.attachMediaStream($display.find("video").get(0), stream)
+	const display = document.createElement('div');
+	display.classList.add('display');
+	display.innerHTML = `<div class="name">${displayName}</div><video autoplay></video>`;
+	document.querySelector('#video-grid').append(display);
+	Janus.attachMediaStream(display.querySelector('video'), stream);
 	return {
-		stream: stream,
-		remove: () => $display.remove()
+		stream,
+		remove: () => display.remove()
 	}
 }
 
