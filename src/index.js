@@ -1,8 +1,10 @@
 import Janus from "janus-gateway-ts";
 import {createVideoRoomClient} from "./lib/VideoRoom";
 
+const clientPromise = createVideoRoomClient({debug: true});
+
 async function connect(server, roomId, displayName) {
-	const client = await createVideoRoomClient({debug: true});
+	const client = await clientPromise;
 	const session = await client.createSession(server);
 	const room = await session.joinRoom(roomId);
 
@@ -49,6 +51,8 @@ function makeDisplay(displayName) {
 	}
 }
 
-connect('wss://farm.maindp.ru/ws', 1234, 'MyDisplayName')
-	.then(() => '')
-	.catch(console.error)
+setTimeout(() => {
+	connect('wss://farm.maindp.ru/ws', 1234, 'MyDisplayName')
+		.then(() => '')
+		.catch(console.error)
+}, 5000);
