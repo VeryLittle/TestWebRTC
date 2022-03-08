@@ -1,3 +1,5 @@
+import adapter from 'webrtc-adapter';
+
 "use strict";
 
 /*
