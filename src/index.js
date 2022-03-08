@@ -1,4 +1,4 @@
-import Janus from "janus-gateway-ts";
+import {Janus} from "./lib/Janus";
 import {createVideoRoomClient} from "./lib/VideoRoom";
 
 const clientPromise = createVideoRoomClient({debug: true});

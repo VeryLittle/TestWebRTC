@@ -1,4 +1,4 @@
-import Janus from "janus-gateway-ts";
+import {Janus} from "./Janus";
 
 export function createVideoRoomClient(options) {
 	return new Promise(function(fulfill) {
