@@ -6,7 +6,7 @@ async function connect(server, roomId, displayName) {
 	const session = await client.createSession(server);
 	const room = await session.joinRoom(roomId);
 
-	const pub = await room.publish({publishOptions: {display: displayName}, mediaOptions: {media: {video: "lowres"}}});
+	const pub = await room.publish({publishOptions: {display: displayName}, mediaOptions: {media: {video: true}}});
 	const myVideo = makeDisplay(displayName);
 	pub.onTrackAdded(track => myVideo.stream.addTrack(track));
 	pub.onTrackRemoved(track => myVideo.stream.removeTrack(track));
