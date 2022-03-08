@@ -2,7 +2,6 @@ import {createVideoRoomClient} from "./lib/VideoRoom";
 
 const clientReady = createVideoRoomClient({debug: true})
 
-
 async function connect(server, roomId, displayName) {
 	const client = await clientReady
 	const session = await client.createSession(server)
