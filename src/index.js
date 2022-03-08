@@ -8,15 +8,20 @@ async function connect(server, roomId, displayName) {
 
 	const pub = await room.publish({publishOptions: {display: displayName}, mediaOptions: {media: {video: true}}});
 	const myVideo = makeDisplay(displayName);
-	pub.onTrackAdded(track => myVideo.stream.addTrack(track));
-	pub.onTrackRemoved(track => myVideo.stream.removeTrack(track));
+	pub.onTrackAdded(track => {
+		console.log('onTrackAdded', track)
+		myVideo.stream.addTrack(track)
+	});
+	pub.onTrackRemoved(track => {
+		console.log('onTrackRemoved', track)
+		myVideo.stream.removeTrack(track)
+	});
 
 	const subs = {};
 	room.onPublisherAdded(publishers => publishers.forEach(subscribe));
 	room.onPublisherRemoved(unsubscribe);
 
 	return {session, room, publisher: pub, subscribers: subs};
-
 
 	async function subscribe(publisher) {
 		const sub = subs[publisher.id] = await room.subscribe([{feed: publisher.id}])

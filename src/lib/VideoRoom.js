@@ -45,7 +45,6 @@ export function createVideoRoomSession(server, options) {
 		}))
 	})
 		.then(function(session) {
-			/** @type {VideoRoomSession} */
 			var ses = {
 				eventTarget: eventTarget,
 				isValid: function() {
@@ -234,7 +233,6 @@ export function joinVideoRoom(session, roomId) {
 					}
 
 					// construct and return the VideoRoom object
-					/** @type {VideoRoom} */
 					var room = {
 						roomId: roomId,
 						pluginHandle: handle,
@@ -330,7 +328,6 @@ export function createVideoRoomPublisher(handle, publisherId, options) {
 		})
 		.then(function() {
 			// construct and return the VideoRoomPublisher object
-			/** @type {VideoRoomPublisher} */
 			var pub = {
 				publisherId: publisherId,
 				onTrackAdded: function(callback) {
@@ -442,7 +439,6 @@ export function createVideoRoomSubscriber(session, roomId, streams, options) {
 				})
 				.then(function() {
 					// construct and return the VideoRoomSubscriber object
-					/** @type {VideoRoomSubscriber} */
 					var sub = {
 						onTrackAdded: function(callback) {
 							callbacks.set("onTrackAdded", callback)
@@ -577,7 +573,6 @@ export function createStreamingSubscriber(session, mountPointId, options) {
 				})
 				.then(function() {
 					// construct and return the StreamingSubscriber object
-					/** @type {StreamingSubscriber} */
 					var sub = {
 						onTrackAdded: function(callback) {
 							callbacks.set("onTrackAdded", callback)
